@@ -64,6 +64,6 @@
 		<framework src="VideoToolbox.framework" />
 
 		<!-- WebRTC static library -->
-		<framework src="lib/WebRTC.framework" embed="true" />
+		<framework src="lib/WebRTC.framework" custom="true" />
 	</platform>
 </plugin>
