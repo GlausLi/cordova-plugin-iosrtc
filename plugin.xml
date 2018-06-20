@@ -18,6 +18,10 @@
 		<engine name="cordova-ios" version=">=3.8.0" />
 	</engines>
 
+	<hook type="after_plugin_install" src="hooks/after_plugin_add.js" />
+    <hook type="after_platform_add" src="hooks/after_plugin_add.js" />
+    <hook type="before_plugin_uninstall" src="hooks/before_plugin_rm.js" />
+
 	<platform name="ios">
 		<config-file target="config.xml" parent="/*">
 			<feature name="iosrtcPlugin">
