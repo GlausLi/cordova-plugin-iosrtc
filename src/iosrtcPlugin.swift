@@ -170,15 +170,13 @@ class iosrtcPlugin : CDVPlugin, AVAudioRecorderDelegate {
 		NSLog("iosrtcPlugin#RTCPeerConnection_startRecording()")
 
 		let streamId = command.argument(at: 0) as! String
-       let isAudioOnly = command.argument(at: 1) as! Bool
+      	let isAudioOnly = command.argument(at: 1) as! NSNumber
 
         // Start video recording
         
-//        if(!isAudioOnly) {
-//
-//        }
-        
-        print(streamId);
+        if(!isAudioOnly) {
+            self.pluginGetUserMedia.startRecording(streamId)            
+        }
         
         // Start audio recording
         
@@ -226,6 +224,10 @@ class iosrtcPlugin : CDVPlugin, AVAudioRecorderDelegate {
        
         do{
             self.audioRecorder.stop()
+			let isAudioOnly = command.argument(at: 1) as! NSNumber
+			if(!isAudioOnly) {
+				self.pluginGetUserMedia.stopRecording()          
+			}           
         } catch {
             NSLog("ERROR");
             print(error)

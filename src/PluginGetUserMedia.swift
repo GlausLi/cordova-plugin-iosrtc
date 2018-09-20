@@ -2,9 +2,18 @@ import Foundation
 import AVFoundation
 import WebRTC
 
-class PluginGetUserMedia {
+class PluginGetUserMedia : NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var rtcPeerConnectionFactory: RTCPeerConnectionFactory
     
+    var externalVideoBufferDelegate: AVCaptureVideoDataOutputSampleBufferDelegate?
+    
+    var videoDataOutput: AVCaptureVideoDataOutput?
+    
+    var assetWriterInput: AVAssetWriterInput?
+    var assetWriter: AVAssetWriter?
+    var frameNumber: Int64 = 0
+    
+    var isRecording: Bool = false
     
     init(rtcPeerConnectionFactory: RTCPeerConnectionFactory) {
         NSLog("PluginGetUserMedia#init()")
@@ -116,7 +125,7 @@ class PluginGetUserMedia {
             
             NSLog("PluginGetUserMedia#call() | chosen video device: %@", String(describing: videoDevice!))
             
-            rtcVideoCapturer = RTCVideoCapturer()
+//            rtcVideoCapturer = RTCVideoCapturer()
             // rtcVideoCapturer = RTCVideoCapturer(deviceName: videoDevice!.localizedName)
             
             if videoMinWidth > 0 {
@@ -164,6 +173,17 @@ class PluginGetUserMedia {
                 }
             }
             
+            
+            for output in (rtcVideoSource?.captureSession.outputs)! {
+                if let videoOutput = output as? AVCaptureVideoDataOutput {
+                    NSLog("+++ FOUND A VIDEO OUTPUT: \(videoOutput) -> \(videoOutput.sampleBufferDelegate)")
+                    
+//                    self.externalVideoBufferDelegate = videoOutput.sampleBufferDelegate
+//                    videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue.main)
+                    self.videoDataOutput = videoOutput
+                }
+            }
+            
             // If videoSource state is "ended" it means that constraints were not satisfied so
             // invoke the given errback.
             if (rtcVideoSource!.state == RTCSourceState.ended) {
@@ -192,6 +212,66 @@ class PluginGetUserMedia {
         callback([
             "stream": pluginMediaStream!.getJSON()
             ])
+    }
+    
+    func captureOutput(_ output: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, from connection: AVCaptureConnection!) {
+        if (self.isRecording) {
+            if(assetWriterInput?.isReadyForMoreMediaData)! {
+                assetWriterInput?.append(sampleBuffer)
+            }
+        }
+        
+        self.externalVideoBufferDelegate?.captureOutput!(output, didOutputSampleBuffer: sampleBuffer, from: connection)
+    }
+    
+    func startRecording(_ streamId: String) {
+        if((self.externalVideoBufferDelegate) == nil) {
+            self.externalVideoBufferDelegate = self.videoDataOutput?.sampleBufferDelegate
+            self.videoDataOutput?.setSampleBufferDelegate(self, queue: DispatchQueue.main)
+        }
+        
+        let outputURL = NSURL(fileURLWithPath:NSHomeDirectory(), isDirectory: true).appendingPathComponent(NSString(format: "Library/NoCloud/%@%@", streamId, ".mp4") as String)
+        
+        let outputSettings: [String : AnyObject] = [
+            AVVideoWidthKey : 480 as AnyObject,
+            AVVideoHeightKey: 640 as AnyObject,
+            AVVideoCodecKey : AVVideoCodecH264 as AnyObject
+        ]
+        
+        assetWriterInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: outputSettings)
+        assetWriterInput?.transform = CGAffineTransform( rotationAngle: CGFloat(( 90 * M_PI ) / 180))
+        self.isRecording = true
+        
+        do {
+            assetWriter = try AVAssetWriter(outputURL: outputURL!, fileType: AVFileTypeMPEG4)
+            assetWriter!.add(assetWriterInput!)
+            assetWriterInput!.expectsMediaDataInRealTime = true
+            
+            assetWriter!.startWriting()
+            assetWriter!.startSession(atSourceTime: kCMTimeZero)
+        }
+        catch {
+            print("[VideoManager]: Error persisting stream!")
+        }
+    }
+    
+    func stopRecording() {
+        self.isRecording = false
+        DispatchQueue.main.async(execute: { () -> Void in
+            self.assetWriter!.finishWriting { () -> Void in
+                self.assetWriter = nil
+                self.assetWriterInput = nil
+            }
+        })
+    }
+    
+    func terminate() {
+        do {
+            self.videoDataOutput?.setSampleBufferDelegate(nil, queue: DispatchQueue.main)
+        }
+        catch {
+            print("[VideoManager]: Error killing stream!")
+        }
     }
 }
 
