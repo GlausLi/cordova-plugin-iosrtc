@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 RTC_EXPORT
 @protocol RTCVideoEncoderFactory <NSObject>
 
-- (nullable id<RTCVideoEncoder>)createEncoder:(RTCVideoCodecInfo *)info;
+- (id<RTCVideoEncoder>)createEncoder:(RTCVideoCodecInfo *)info;
 - (NSArray<RTCVideoCodecInfo *> *)supportedCodecs;  // TODO(andersc): "supportedFormats" instead?
 
 @end
@@ -28,27 +28,9 @@ RTC_EXPORT
 RTC_EXPORT
 @protocol RTCVideoDecoderFactory <NSObject>
 
-- (nullable id<RTCVideoDecoder>)createDecoder:(RTCVideoCodecInfo *)info;
+- (id<RTCVideoDecoder>)createDecoder:(RTCVideoCodecInfo *)info;
 - (NSArray<RTCVideoCodecInfo *> *)supportedCodecs;  // TODO(andersc): "supportedFormats" instead?
 
-@end
-
-#pragma mark - Default factories
-
-/** These codec factories include support for all codecs bundled with WebRTC. If using custom
- *  codecs, create custom implementations of RTCVideoEncoderFactory and RTCVideoDecoderFactory.
- */
-RTC_EXPORT
-@interface RTCDefaultVideoEncoderFactory : NSObject <RTCVideoEncoderFactory>
-
-@property(nonatomic, retain) RTCVideoCodecInfo *preferredCodec;
-
-+ (NSArray<RTCVideoCodecInfo *> *)supportedCodecs;
-
-@end
-
-RTC_EXPORT
-@interface RTCDefaultVideoDecoderFactory : NSObject <RTCVideoDecoderFactory>
 @end
 
 NS_ASSUME_NONNULL_END

@@ -72,8 +72,6 @@ RTC_EXPORT
 @property(nonatomic, readonly) int cropX;
 @property(nonatomic, readonly) int cropY;
 
-+ (NSSet<NSNumber *> *)supportedPixelFormats;
-
 - (instancetype)initWithPixelBuffer:(CVPixelBufferRef)pixelBuffer;
 - (instancetype)initWithPixelBuffer:(CVPixelBufferRef)pixelBuffer
                        adaptedWidth:(int)adaptedWidth
