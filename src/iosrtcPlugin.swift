@@ -3,7 +3,7 @@ import AVFoundation
 import WebRTC
 
 @objc(iosrtcPlugin) // This class must be accesible from Objective-C.
-class iosrtcPlugin : CDVPlugin {
+class iosrtcPlugin : CDVPlugin, AVAudioRecorderDelegate {
 	// RTCPeerConnectionFactory single instance.
 	var rtcPeerConnectionFactory: RTCPeerConnectionFactory!
 	// Single PluginGetUserMedia instance.
@@ -18,6 +18,8 @@ class iosrtcPlugin : CDVPlugin {
 	var pluginMediaStreamRenderers: [Int : PluginMediaStreamRenderer]!
 	// Dispatch queue for serial operations.
 	var queue: DispatchQueue!
+    
+    var audioRecorder: AVAudioRecorder!
 
 
 	// This is just called if <param name="onload" value="true" /> in plugin.xml.
@@ -168,15 +170,67 @@ class iosrtcPlugin : CDVPlugin {
 		NSLog("iosrtcPlugin#RTCPeerConnection_startRecording()")
 
 		let streamId = command.argument(at: 0) as! String
-		let directory = command.argument(at: 1) as! String
-		let isAudioOnly = command.argument(at: 2) as! Bool
+       let isAudioOnly = command.argument(at: 1) as! Bool
 
+        // Start video recording
+        
+//        if(!isAudioOnly) {
+//
+//        }
+        
+        print(streamId);
+        
+        // Start audio recording
+        
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: .mixWithOthers)
+            try audioSession.setActive(true)
+            
+            let settings = [
+                AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+                AVSampleRateKey: 44100,
+                AVNumberOfChannelsKey: 1,
+                AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+            ]
+            
+            let outputURL = NSURL(fileURLWithPath:NSHomeDirectory(), isDirectory: true).appendingPathComponent(NSString(format: "Library/NoCloud/%@%@", streamId, ".m4a") as String)
+            
+            let fileManager: FileManager = FileManager.default
+            if outputURL?.path != nil{
+                if fileManager.fileExists(atPath: outputURL!.path) {
+                    do{
+                        try fileManager.removeItem(atPath: outputURL?.path as! String)
+                    }
+                    catch{
+                        print(error)
+                    }
+                }
+            }
+            
+            self.audioRecorder = try AVAudioRecorder(url: outputURL!, settings: settings)
+            audioRecorder.delegate = self
+            audioRecorder.record()
+            
+            print(outputURL?.path);
+        
+        } catch {
+            print("Setting category to AVAudioSessionCategoryPlayback failed.")
+        }
+        
 		self.emit(command.callbackId, result: CDVPluginResult(status: CDVCommandStatus_OK))
 	}
 
 	func RTCPeerConnection_stopRecording(_ command: CDVInvokedUrlCommand) {
 		NSLog("iosrtcPlugin#RTCPeerConnection_stopRecording()")
-
+       
+        do{
+            self.audioRecorder.stop()
+        } catch {
+            NSLog("ERROR");
+            print(error)
+        }
+        
 		self.emit(command.callbackId, result: CDVPluginResult(status: CDVCommandStatus_OK))
 	}
 
@@ -939,4 +993,25 @@ class iosrtcPlugin : CDVPlugin {
 	fileprivate func deleteMediaStreamTrack(_ id: String) {
 		self.pluginMediaStreamTracks[id] = nil
 	}
+    
+    // AudioRecorder delegate
+    
+    func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
+        NSLog("ERRROR finished");
+    }
+    
+    func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
+        NSLog("recording finished");
+    }
+    
+    func capture(_ output: AVCaptureFileOutput!, didStartRecordingToOutputFileAt fileURL: URL!, fromConnections connections: [Any]!) {
+        NSLog("didStartRecordingToOutputFileAt");
+    }
+    
+    func capture(_ output: AVCaptureFileOutput!, didFinishRecordingToOutputFileAt outputFileURL: URL!, fromConnections connections: [Any]!, error: Error!) {
+        NSLog("didFinishRecordingToOutputFileAt");
+        NSLog("@", outputFileURL.path);
+        UISaveVideoAtPathToSavedPhotosAlbum(outputFileURL.path, nil, nil, nil)
+        
+    }
 }

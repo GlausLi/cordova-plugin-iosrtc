@@ -1377,22 +1377,19 @@ function RTCPeerConnection(pcConfig, pcConstraints) {
 }
 
 
-RTCPeerConnection.prototype.startRecording = function (recordingId, directory, audioOnly) {
-	var callback, errback;
-
+RTCPeerConnection.prototype.startRecording = function (recordingId, audioOnly) {
+	
+	console.log(recordingId, audioOnly);
+ 
 	function onResultOK(data) {		
-		debug('startRecording() | success');
-		callback();
+		debug('startRecording() | success');		
 	}
 
 	function onResultError(error) {
-		debugerror('startRecording() | failure: %s', error);
-		if (typeof errback === 'function') {
-			errback(new global.DOMError(error));
-		}
+		
 	}
 
-	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_startRecording', [recordingId, directory, audioOnly]);
+	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_startRecording', [recordingId, audioOnly]);
 };
 
 RTCPeerConnection.prototype.stopRecording = function () {
