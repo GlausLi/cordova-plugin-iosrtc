@@ -15,6 +15,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+RTC_EXPORT extern NSString *const kRTCVideoCodecVp8Name;
+RTC_EXPORT extern NSString *const kRTCVideoCodecVp9Name;
+RTC_EXPORT extern NSString *const kRTCVideoCodecH264Name;
+RTC_EXPORT extern NSString *const kRTCLevel31ConstrainedHigh;
+RTC_EXPORT extern NSString *const kRTCLevel31ConstrainedBaseline;
+
 /** Represents an encoded frame's type. */
 typedef NS_ENUM(NSUInteger, RTCFrameType) {
   RTCFrameTypeEmptyFrame = 0,
@@ -69,19 +75,6 @@ RTC_EXPORT
 
 @end
 
-/** Class for H264 specific config. */
-typedef NS_ENUM(NSUInteger, RTCH264PacketizationMode) {
-  RTCH264PacketizationModeNonInterleaved = 0,  // Mode 1 - STAP-A, FU-A is allowed
-  RTCH264PacketizationModeSingleNalUnit        // Mode 0 - only single NALU allowed
-};
-
-RTC_EXPORT
-@interface RTCCodecSpecificInfoH264 : NSObject<RTCCodecSpecificInfo>
-
-@property(nonatomic, assign) RTCH264PacketizationMode packetizationMode;
-
-@end
-
 /** Callback block for encoder. */
 typedef BOOL (^RTCVideoEncoderCallback)(RTCEncodedImage *frame,
                                         id<RTCCodecSpecificInfo> info,
@@ -97,15 +90,18 @@ typedef NS_ENUM(NSUInteger, RTCVideoCodecMode) {
 
 /** Holds information to identify a codec. Corresponds to cricket::VideoCodec. */
 RTC_EXPORT
-@interface RTCVideoCodecInfo : NSObject
+@interface RTCVideoCodecInfo : NSObject <NSCoding>
 
 - (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithName:(NSString *)name;
 
 - (instancetype)initWithName:(NSString *)name
                   parameters:(nullable NSDictionary<NSString *, NSString *> *)parameters
     NS_DESIGNATED_INITIALIZER;
 
-@property(nonatomic, readonly) NSInteger payload;
+- (BOOL)isEqualToCodecInfo:(RTCVideoCodecInfo *)info;
+
 @property(nonatomic, readonly) NSString *name;
 @property(nonatomic, readonly) NSDictionary<NSString *, NSString *> *parameters;
 
@@ -152,7 +148,7 @@ RTC_EXPORT
                        numberOfCores:(int)numberOfCores;
 - (NSInteger)releaseEncoder;
 - (NSInteger)encode:(RTCVideoFrame *)frame
-    codecSpecificInfo:(id<RTCCodecSpecificInfo>)info
+    codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
            frameTypes:(NSArray<NSNumber *> *)frameTypes;
 - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate;
 - (NSString *)implementationName;
@@ -175,7 +171,7 @@ RTC_EXPORT
 - (NSInteger)decode:(RTCEncodedImage *)encodedImage
           missingFrames:(BOOL)missingFrames
     fragmentationHeader:(RTCRtpFragmentationHeader *)fragmentationHeader
-      codecSpecificInfo:(__nullable id<RTCCodecSpecificInfo>)info
+      codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
            renderTimeMs:(int64_t)renderTimeMs;
 - (NSString *)implementationName;
 

@@ -1377,6 +1377,44 @@ function RTCPeerConnection(pcConfig, pcConstraints) {
 }
 
 
+RTCPeerConnection.prototype.startRecording = function (recordingId, directory, audioOnly) {
+	var callback, errback;
+
+	function onResultOK(data) {		
+		debug('startRecording() | success');
+		callback();
+	}
+
+	function onResultError(error) {
+		debugerror('startRecording() | failure: %s', error);
+		if (typeof errback === 'function') {
+			errback(new global.DOMError(error));
+		}
+	}
+
+	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_startRecording', [recordingId, directory, audioOnly]);
+};
+
+RTCPeerConnection.prototype.stopRecording = function () {
+	var callback, errback;
+
+	function onResultOK(data) {		
+		debug('stopRecording() | success');
+		callback();
+	}
+
+	function onResultError(error) {
+		debugerror('stopRecording() | failure: %s', error);
+		if (typeof errback === 'function') {
+			errback(new global.DOMError(error));
+		}
+	}
+
+	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_stopRecording', []);
+};
+
+
+
 RTCPeerConnection.prototype.createOffer = function () {
 	var self = this,
 		isPromise,

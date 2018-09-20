@@ -164,6 +164,23 @@ class iosrtcPlugin : CDVPlugin {
 	}
 
 
+	func RTCPeerConnection_startRecording(_ command: CDVInvokedUrlCommand) {
+		NSLog("iosrtcPlugin#RTCPeerConnection_startRecording()")
+
+		let streamId = command.argument(at: 0) as! String
+		let directory = command.argument(at: 1) as! String
+		let isAudioOnly = command.argument(at: 2) as! Bool
+
+		self.emit(command.callbackId, result: CDVPluginResult(status: CDVCommandStatus_OK))
+	}
+
+	func RTCPeerConnection_stopRecording(_ command: CDVInvokedUrlCommand) {
+		NSLog("iosrtcPlugin#RTCPeerConnection_stopRecording()")
+
+		self.emit(command.callbackId, result: CDVPluginResult(status: CDVCommandStatus_OK))
+	}
+
+
 	func RTCPeerConnection_setLocalDescription(_ command: CDVInvokedUrlCommand) {
 		NSLog("iosrtcPlugin#RTCPeerConnection_setLocalDescription()")
 
