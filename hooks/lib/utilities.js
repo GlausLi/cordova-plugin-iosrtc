@@ -14,6 +14,6 @@ module.exports = {
      * @returns The path to the XCode project's .pbxproj file.
      */
     getXcodeProjectPath: function(context) {
-        return path.join("platforms", "ios", "LinguSocial.xcodeproj", "project.pbxproj");
+        return path.join("platforms", "ios", "Phemium Videocall TestApp.xcodeproj", "project.pbxproj");
     }
 };
