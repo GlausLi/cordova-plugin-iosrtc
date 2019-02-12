@@ -7,7 +7,7 @@ var utilities = require("./utilities");
  * This is used as the display text for the build phase block in XCode as well as the
  * inline comments inside of the .pbxproj file for the build script phase block.
  */
-var comment = "\"LinguSocial: iosRTC\"";
+var comment = "\"Phemium: iosRTC\"";
 
 module.exports = {
 
