@@ -1,3 +1,4 @@
+
 /*
  * cordova-plugin-iosrtc v4.0.2
  * Cordova iOS plugin exposing the full WebRTC W3C JavaScript APIs
@@ -624,7 +625,6 @@ MediaStreamRenderer.prototype.refresh = function () {
 	} else {
 		visible = !!this.element.offsetHeight;  // Returns 0 if element or any parent is hidden.
 	}
-
 	// opacity
 	opacity = parseFloat(computedStyle.opacity);
 
@@ -1402,8 +1402,22 @@ RTCPeerConnection.prototype.stopRecording = function (audioOnly) {
 	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_stopRecording', [audioOnly]);
 };
 
+ 
+ RTCPeerConnection.prototype.switchCamera = function (mediastream) {
+    debug('switchCamera()');
+ 
+     function onResultOK(data) {
+         debug('switchCamera() | success [desc:%o]', data);
+     }
+ 
+     function onResultError(error) {
+         debugerror('switchCamera() | failure: %s', error);
+     }
 
-
+    exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_switchcamera', [this.pcId,mediastream.id]);
+ }
+ 
+ 
 RTCPeerConnection.prototype.createOffer = function () {
 	var self = this,
 		isPromise,
@@ -2384,7 +2398,10 @@ function getUserMedia(constraints) {
 		} else if (typeof constraints.video.sourceId === 'string') {
 			newConstraints.videoDeviceId = constraints.video.sourceId;
 		}
-
+       // Also check deviceId exact (mangled by softphone.js).
+       if (constraints.video.deviceId != undefined && typeof constraints.video.deviceId.exact === 'string') {
+           newConstraints.videoDeviceId = constraints.video.deviceId.exact;
+       }
 		// Get requested min/max width.
 		if (typeof constraints.video.width === 'object') {
 			if (isPositiveInteger(constraints.video.width.min)) {
@@ -2531,8 +2548,7 @@ domready(function () {
 	MediaStream.setMediaStreams(mediaStreams);
 	videoElementsHandler(mediaStreams, mediaStreamRenderers);
 });
-
-
+ 
 function refreshVideos() {
 	debug('refreshVideos()');
 
@@ -3883,3 +3899,4 @@ function _dispatchEvent(event) {
 
 },{}]},{},[15])(15)
 });
+

@@ -1,10 +1,10 @@
 {
   "name": "cordova-plugin-iosrtc",
-  "version": "4.0.2",
+  "version": "1.0.0",
   "description": "Cordova iOS plugin exposing the full WebRTC W3C JavaScript APIs",
-  "author": "Iñaki Baz Castillo (https://inakibaz.me)",
+  "author": "Glaus Livio",
   "contributors": [
-    "Saúl Ibarra Corretgé (http://bettercallsaghul.com)"
+    "Glaus Livio"
   ],
   "license": "MIT",
   "keywords": [
@@ -13,13 +13,13 @@
     "ios"
   ],
   "main": "js/iosrtc.js",
-  "homepage": "https://github.com/marcelgoya/cordova-plugin-iosrtc",
+  "homepage": "https://github.com/GlausLivio/cordova-plugin-iosrtc",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/marcelgoya/cordova-plugin-iosrtc.git"
+    "url": "git+https://github.com/GlausLivio/cordova-plugin-iosrtc.git"
   },
   "bugs": {
-    "url": "https://github.com/marcelgoya/cordova-plugin-iosrtc/issues"
+    "url": "https://github.com/GlausLivio/cordova-plugin-iosrtc/issues"
   },
   "dependencies": {
     "debug": "^2.6.8",
@@ -29,16 +29,19 @@
   },
   "devDependencies": {
     "browserify": "^14.4.0",
-    "gulp": "git+https://github.com/gulpjs/gulp.git#4.0",
+    "gulp": "4.0.0",
     "gulp-derequire": "^2.1.0",
     "gulp-header": "^1.8.8",
     "gulp-jscs": "^4.0.0",
     "gulp-jscs-stylish": "^1.4.0",
-    "gulp-jshint": "^2.0.4",
+    "gulp-jshint": "^2.1.0",
     "jshint": "^2.9.4",
     "jshint-stylish": "~2.2.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
+  },
+  "scripts": {
+    "gulp": "gulp"
   },
   "cordova": {
     "id": "cordova-plugin-iosrtc",
