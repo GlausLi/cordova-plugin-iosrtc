@@ -50,6 +50,7 @@ class PluginRTCPeerConnection : NSObject, RTCPeerConnectionDelegate {
 
         let config = RTCConfiguration()
         config.iceServers = self.pluginRTCPeerConnectionConfig.getIceServers()
+        config.iceTransportPolicy = RTCIceTransportPolicy.relay
         
 		self.rtcPeerConnection = self.rtcPeerConnectionFactory.peerConnection(
             with: config,
@@ -249,7 +250,33 @@ class PluginRTCPeerConnection : NSObject, RTCPeerConnectionDelegate {
 		self.rtcPeerConnection.remove(pluginMediaStream.rtcMediaStream)
 	}
 
-
+    func switchcamera(
+        _ pluginMediaStream: PluginMediaStream,
+        callback: (_ data: NSDictionary) -> Void,
+        errback: (_ error: Error) -> Void
+        ) {
+        NSLog("PluginRTCPeerConnection#switchcamera()")
+        
+        if self.rtcPeerConnection.signalingState.rawValue == RTCSignalingState.closed.rawValue {
+            return
+        }
+        
+        let sender: RTCRtpSender = self.rtcPeerConnection.senders.filter{
+            $0.track?.kind == pluginMediaStream.rtcMediaStream.videoTracks[0].kind
+            }.first!
+        sender.track = pluginMediaStream.rtcMediaStream.videoTracks[0]
+        
+        let audiosender: RTCRtpSender = self.rtcPeerConnection.senders.filter{
+            $0.track?.kind == pluginMediaStream.rtcMediaStream.audioTracks[0].kind
+            }.first!
+        audiosender.track = pluginMediaStream.rtcMediaStream.audioTracks[0]
+        
+        let data: NSDictionary = [
+            "result": true
+        ]
+        callback(data);
+    }
+    
 	func createDataChannel(
 		_ dcId: Int,
 		label: String,
@@ -338,7 +365,7 @@ class PluginRTCPeerConnection : NSObject, RTCPeerConnectionDelegate {
 			callback(array)
 		}
         
-        self.rtcPeerConnection.stats(for: pluginMediaStreamTrack?.rtcMediaStreamTrack, statsOutputLevel: RTCStatsOutputLevel.standard)
+//        self.rtcPeerConnection.stats(for: pluginMediaStreamTrack?.rtcMediaStreamTrack, statsOutputLevel: RTCStatsOutputLevel.standard)
     }
 
 	func close() {

@@ -97,6 +97,40 @@ class iosrtcPlugin : CDVPlugin, AVAudioRecorderDelegate {
 		pluginRTCPeerConnection.run()
 	}
 
+    func RTCPeerConnection_switchcamera(_ command: CDVInvokedUrlCommand) {
+        NSLog("iosrtcPlugin#RTCPeerConnection_switchcamera()")
+        
+        let pcId = command.argument(at: 0) as! Int
+        let streamId = command.argument(at: 1) as! String
+        
+        let pluginRTCPeerConnection = self.pluginRTCPeerConnections[pcId]
+        let pluginMediastream = self.pluginMediaStreams[streamId]
+        
+        if pluginRTCPeerConnection == nil {
+            NSLog("iosrtcPlugin#RTCPeerConnection_switchcamera() | ERROR: pluginRTCPeerConnection with pcId=%@ does not exist", String(pcId))
+            return;
+        }
+        
+        if pluginMediastream == nil {
+            NSLog("iosrtcPlugin#RTCPeerConnection_switchcamera() | ERROR: pluginMediaStream with id=%@ does not exist", String(streamId))
+            return;
+        }
+        
+        self.queue.async { [weak pluginRTCPeerConnection] in
+            pluginRTCPeerConnection?.switchcamera(pluginMediastream!,
+                                                  callback: { (data: NSDictionary) -> Void in
+                                                    self.emit(command.callbackId,
+                                                              result: CDVPluginResult(status: CDVCommandStatus_OK, messageAs: data as? [AnyHashable: Any])
+                                                    )
+            },
+                                                  errback: { (error: Error) -> Void in
+                                                    self.emit(command.callbackId,
+                                                              result: CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription)
+                                                    )
+            }
+            )
+        }
+    }
 
 	func RTCPeerConnection_createOffer(_ command: CDVInvokedUrlCommand) {
 		NSLog("iosrtcPlugin#RTCPeerConnection_createOffer()")
@@ -894,20 +928,21 @@ class iosrtcPlugin : CDVPlugin, AVAudioRecorderDelegate {
 		NSLog("iosrtcPlugin#getUserMedia()")
 
 		let constraints = command.argument(at: 0) as! NSDictionary
-
-		self.pluginGetUserMedia.call(constraints,
-			callback: { (data: NSDictionary) -> Void in
-				self.emit(command.callbackId,
-					result: CDVPluginResult(status: CDVCommandStatus_OK, messageAs: data as! [AnyHashable: Any])
-				)
-			},
-			errback: { (error: String) -> Void in
-				self.emit(command.callbackId,
-					result: CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: error)
-				)
-			},
-			eventListenerForNewStream: self.saveMediaStream
-		)
+        self.commandDelegate.run {
+            self.pluginGetUserMedia.call(constraints,
+                                         callback: { (data: NSDictionary) -> Void in
+                                            self.emit(command.callbackId,
+                                                      result: CDVPluginResult(status: CDVCommandStatus_OK, messageAs: data as! [AnyHashable: Any])
+                                            )
+            },
+                                         errback: { (error: String) -> Void in
+                                            self.emit(command.callbackId,
+                                                      result: CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: error)
+                                            )
+            },
+                                         eventListenerForNewStream: self.saveMediaStream
+            )
+        }
 	}
 
 

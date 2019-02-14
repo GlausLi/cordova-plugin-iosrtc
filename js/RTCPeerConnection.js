@@ -688,6 +688,19 @@ RTCPeerConnection.prototype.close = function () {
 	exec(null, null, 'iosrtcPlugin', 'RTCPeerConnection_close', [this.pcId]);
 };
 
+RTCPeerConnection.prototype.switchCamera = function (mediastream) {
+	debug('switchCamera()');
+
+	function onResultOK(data) {
+		debug('switchCamera() | success [data:%o]', data);
+	}
+
+	function onResultError(error) {
+		debugerror('switchCamera() | failure: %s', error);
+	}
+	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_switchcamera', [this.pcId,mediastream.id]);
+}
+
 
 /**
  * Private API.

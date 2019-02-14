@@ -29,6 +29,7 @@ class PluginRTCPeerConnectionConfig {
 				))
 			}
 		}
+        self.iceServers.reverse();
 	}
 
 
@@ -39,7 +40,6 @@ class PluginRTCPeerConnectionConfig {
 
 	func getIceServers() -> [RTCIceServer] {
 		NSLog("PluginRTCPeerConnectionConfig#getIceServers()")
-
 		return self.iceServers
 	}
 }

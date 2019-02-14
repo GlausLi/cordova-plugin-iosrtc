@@ -163,10 +163,11 @@ class PluginGetUserMedia : NSObject, AVCaptureVideoDataOutputSampleBufferDelegat
                 mandatoryConstraints: mandatoryConstraints,
                 optionalConstraints: [:]
             )
-            
+            print("constraints:")
+            print(mandatoryConstraints)
             rtcVideoSource = self.rtcPeerConnectionFactory.avFoundationVideoSource(with: constraints)
             if(videoDevice != nil) {
-                if (videoDevice!.position == AVCaptureDevicePosition.back) {
+                if (videoDevice!.position == AVCaptureDevicePosition.front) {
                     rtcVideoSource?.useBackCamera = true
                 } else {
                     rtcVideoSource?.useBackCamera = false

@@ -208,6 +208,9 @@ class PluginMediaStreamRenderer : NSObject, RTCEAGLVideoViewDelegate {
             }
             
             self.elementView.layer.cornerRadius = CGFloat(borderRadius)
+        }else{
+            self.videoView.isHidden = true
+            self.elementView.isHidden = true
         }
     }
     
