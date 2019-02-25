@@ -1,4 +1,3 @@
-
 /*
  * cordova-plugin-iosrtc v4.0.2
  * Cordova iOS plugin exposing the full WebRTC W3C JavaScript APIs
@@ -731,14 +730,14 @@ MediaStreamRenderer.prototype.refresh = function () {
 		default:
 			objectFit = 'contain';
 			// The element has higher or equal width/height ratio than the video.
-			if (elementRatio >= videoRatio) {
+//            if (elementRatio >= videoRatio) {
 				videoViewHeight = elementHeight;
 				videoViewWidth = videoViewHeight * videoRatio;
 			// The element has lower width/height ratio than the video.
-			} else if (elementRatio < videoRatio) {
-				videoViewWidth = elementWidth;
-				videoViewHeight = videoViewWidth / videoRatio;
-			}
+//            } else if (elementRatio < videoRatio) {
+//                videoViewWidth = elementWidth;
+//                videoViewHeight = videoViewWidth / videoRatio;
+//            }
 			break;
 	}
 

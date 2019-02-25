@@ -163,8 +163,7 @@ class PluginGetUserMedia : NSObject, AVCaptureVideoDataOutputSampleBufferDelegat
                 mandatoryConstraints: mandatoryConstraints,
                 optionalConstraints: [:]
             )
-            print("constraints:")
-            print(mandatoryConstraints)
+            
             rtcVideoSource = self.rtcPeerConnectionFactory.avFoundationVideoSource(with: constraints)
             if(videoDevice != nil) {
                 if (videoDevice!.position == AVCaptureDevicePosition.front) {
