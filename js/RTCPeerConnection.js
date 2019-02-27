@@ -11,7 +11,7 @@ var
 	debug = require('debug')('iosrtc:RTCPeerConnection'),
 	debugerror = require('debug')('iosrtc:ERROR:RTCPeerConnection'),
 	exec = require('cordova/exec'),
-	randomNumber = require('random-number').generator({min: 10000, max: 99999, integer: true}),
+	randomNumber = require('random-number').generator({ min: 10000, max: 99999, integer: true }),
 	EventTarget = require('yaeti').EventTarget,
 	RTCSessionDescription = require('./RTCSessionDescription'),
 	RTCIceCandidate = require('./RTCIceCandidate'),
@@ -688,18 +688,44 @@ RTCPeerConnection.prototype.close = function () {
 	exec(null, null, 'iosrtcPlugin', 'RTCPeerConnection_close', [this.pcId]);
 };
 
+RTCPeerConnection.prototype.startRecording = function (recordingId, audioOnly) {
+	function onResultOK() {
+		debug('startRecording() | success');
+	}
+
+	function onResultError(error) {
+		debugerror('stopRecording() | failure: %s', error);
+	}
+
+	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_startRecording', [recordingId, audioOnly]);
+};
+
+RTCPeerConnection.prototype.stopRecording = function (audioOnly) {
+	function onResultOK() {
+		debug('stopRecording() | success');
+	}
+
+	function onResultError(error) {
+		debugerror('stopRecording() | failure: %s', error);
+	}
+
+	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_stopRecording', [audioOnly]);
+};
+
+
 RTCPeerConnection.prototype.switchCamera = function (mediastream) {
 	debug('switchCamera()');
 
 	function onResultOK(data) {
-		debug('switchCamera() | success [data:%o]', data);
+		debug('switchCamera() | success [desc:%o]', data);
 	}
 
 	function onResultError(error) {
 		debugerror('switchCamera() | failure: %s', error);
 	}
-	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_switchcamera', [this.pcId,mediastream.id]);
-}
+
+	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_switchcamera', [this.pcId, mediastream.id]);
+};
 
 
 /**

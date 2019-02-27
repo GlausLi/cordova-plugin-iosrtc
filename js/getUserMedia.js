@@ -98,7 +98,10 @@ function getUserMedia(constraints) {
 		} else if (typeof constraints.video.sourceId === 'string') {
 			newConstraints.videoDeviceId = constraints.video.sourceId;
 		}
-
+		// Also check deviceId exact (mangled by softphone.js).
+		if (constraints.video.deviceId !== undefined && typeof constraints.video.deviceId.exact === 'string') {
+			newConstraints.videoDeviceId = constraints.video.deviceId.exact;
+		}
 		// Get requested min/max width.
 		if (typeof constraints.video.width === 'object') {
 			if (isPositiveInteger(constraints.video.width.min)) {

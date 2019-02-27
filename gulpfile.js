@@ -21,7 +21,7 @@ var gulp = require('gulp'),
 /**
  * Banner.
  */
-	banner = 'banner'; //fs.readFileSync('banner.txt').toString(),
+	banner = fs.readFileSync('banner.txt').toString(),
 	banner_options = {
 		pkg: PKG,
 		currentYear: (new Date()).getFullYear()

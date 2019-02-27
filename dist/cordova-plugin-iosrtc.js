@@ -1,12 +1,10 @@
 /*
- * cordova-plugin-iosrtc v4.0.2
+ * cordova-plugin-iosrtc v1.0.0
  * Cordova iOS plugin exposing the full WebRTC W3C JavaScript APIs
- * Copyright 2015-2017 eFace2Face, Inc. (https://eface2face.com)
- * Copyright 2017 BasqueVoIPMafia (https://github.com/BasqueVoIPMafia)
- * License MIT
+ * Copyright 2017-2019 BasqueVoIPMafia (https://github.com/BasqueVoIPMafia)
  */
 
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.iosrtc = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.iosrtc = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(_dereq_,module,exports){
 /**
  * Expose an object with WebRTC Errors.
  */
@@ -624,6 +622,7 @@ MediaStreamRenderer.prototype.refresh = function () {
 	} else {
 		visible = !!this.element.offsetHeight;  // Returns 0 if element or any parent is hidden.
 	}
+
 	// opacity
 	opacity = parseFloat(computedStyle.opacity);
 
@@ -729,15 +728,17 @@ MediaStreamRenderer.prototype.refresh = function () {
 		// 'contain'.
 		default:
 			objectFit = 'contain';
-			// The element has higher or equal width/height ratio than the video.
-//            if (elementRatio >= videoRatio) {
-				videoViewHeight = elementHeight;
-				videoViewWidth = videoViewHeight * videoRatio;
-			// The element has lower width/height ratio than the video.
-//            } else if (elementRatio < videoRatio) {
-//                videoViewWidth = elementWidth;
-//                videoViewHeight = videoViewWidth / videoRatio;
-//            }
+			videoViewHeight = elementHeight;
+			videoViewWidth = videoViewHeight * videoRatio;
+			//The element has higher or equal width/height ratio than the video.
+			// if (elementRatio >= videoRatio) {
+			// 	videoViewHeight = elementHeight;
+			// 	videoViewWidth = videoViewHeight * videoRatio;
+			//The element has lower width/height ratio than the video.
+			// } else if (elementRatio < videoRatio) {
+			// 	videoViewWidth = elementWidth;
+			// 	videoViewHeight = videoViewWidth / videoRatio;
+			// }
 			break;
 	}
 
@@ -1331,7 +1332,7 @@ var
 	debug = _dereq_('debug')('iosrtc:RTCPeerConnection'),
 	debugerror = _dereq_('debug')('iosrtc:ERROR:RTCPeerConnection'),
 	exec = _dereq_('cordova/exec'),
-	randomNumber = _dereq_('random-number').generator({min: 10000, max: 99999, integer: true}),
+	randomNumber = _dereq_('random-number').generator({ min: 10000, max: 99999, integer: true }),
 	EventTarget = _dereq_('yaeti').EventTarget,
 	RTCSessionDescription = _dereq_('./RTCSessionDescription'),
 	RTCIceCandidate = _dereq_('./RTCIceCandidate'),
@@ -1376,47 +1377,6 @@ function RTCPeerConnection(pcConfig, pcConstraints) {
 }
 
 
-RTCPeerConnection.prototype.startRecording = function (recordingId, audioOnly) {
-	 
-	function onResultOK(data) {		
-		debug('startRecording() | success');		
-	}
-
-	function onResultError(error) {
-		
-	}
-
-	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_startRecording', [recordingId, audioOnly]);
-};
-
-RTCPeerConnection.prototype.stopRecording = function (audioOnly) {
-	function onResultOK(data) {		
-		debug('stopRecording() | success');		
-	}
-
-	function onResultError(error) {
-		debugerror('stopRecording() | failure: %s', error);		
-	}
-
-	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_stopRecording', [audioOnly]);
-};
-
- 
- RTCPeerConnection.prototype.switchCamera = function (mediastream) {
-    debug('switchCamera()');
- 
-     function onResultOK(data) {
-         debug('switchCamera() | success [desc:%o]', data);
-     }
- 
-     function onResultError(error) {
-         debugerror('switchCamera() | failure: %s', error);
-     }
-
-    exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_switchcamera', [this.pcId,mediastream.id]);
- }
- 
- 
 RTCPeerConnection.prototype.createOffer = function () {
 	var self = this,
 		isPromise,
@@ -2049,6 +2009,45 @@ RTCPeerConnection.prototype.close = function () {
 	exec(null, null, 'iosrtcPlugin', 'RTCPeerConnection_close', [this.pcId]);
 };
 
+RTCPeerConnection.prototype.startRecording = function (recordingId, audioOnly) {
+	function onResultOK() {
+		debug('startRecording() | success');
+	}
+
+	function onResultError(error) {
+		debugerror('stopRecording() | failure: %s', error);
+	}
+
+	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_startRecording', [recordingId, audioOnly]);
+};
+
+RTCPeerConnection.prototype.stopRecording = function (audioOnly) {
+	function onResultOK() {
+		debug('stopRecording() | success');
+	}
+
+	function onResultError(error) {
+		debugerror('stopRecording() | failure: %s', error);
+	}
+
+	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_stopRecording', [audioOnly]);
+};
+
+
+RTCPeerConnection.prototype.switchCamera = function (mediastream) {
+	debug('switchCamera()');
+
+	function onResultOK(data) {
+		debug('switchCamera() | success [desc:%o]', data);
+	}
+
+	function onResultError(error) {
+		debugerror('switchCamera() | failure: %s', error);
+	}
+
+	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_switchcamera', [this.pcId, mediastream.id]);
+};
+
 
 /**
  * Private API.
@@ -2397,10 +2396,10 @@ function getUserMedia(constraints) {
 		} else if (typeof constraints.video.sourceId === 'string') {
 			newConstraints.videoDeviceId = constraints.video.sourceId;
 		}
-       // Also check deviceId exact (mangled by softphone.js).
-       if (constraints.video.deviceId != undefined && typeof constraints.video.deviceId.exact === 'string') {
-           newConstraints.videoDeviceId = constraints.video.deviceId.exact;
-       }
+		// Also check deviceId exact (mangled by softphone.js).
+		if (constraints.video.deviceId !== undefined && typeof constraints.video.deviceId.exact === 'string') {
+			newConstraints.videoDeviceId = constraints.video.deviceId.exact;
+		}
 		// Get requested min/max width.
 		if (typeof constraints.video.width === 'object') {
 			if (isPositiveInteger(constraints.video.width.min)) {
@@ -2547,7 +2546,8 @@ domready(function () {
 	MediaStream.setMediaStreams(mediaStreams);
 	videoElementsHandler(mediaStreams, mediaStreamRenderers);
 });
- 
+
+
 function refreshVideos() {
 	debug('refreshVideos()');
 
@@ -3898,4 +3898,3 @@ function _dispatchEvent(event) {
 
 },{}]},{},[15])(15)
 });
-
