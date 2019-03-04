@@ -19,15 +19,15 @@ class PluginEnumerateDevices {
 
 		for device: AVCaptureDevice in devices {
 			var facing: String
-			let hasAudio = device.hasMediaType(AVMediaTypeAudio)
-			let hasVideo = device.hasMediaType(AVMediaTypeVideo)
+            let hasAudio = device.hasMediaType(AVMediaType.audio)
+            let hasVideo = device.hasMediaType(AVMediaType.video)
 
 			switch device.position {
-			case AVCaptureDevicePosition.unspecified:
+            case AVCaptureDevice.Position.unspecified:
 				facing = "unknown"
-			case AVCaptureDevicePosition.back:
+            case AVCaptureDevice.Position.back:
 				facing = "back"
-			case AVCaptureDevicePosition.front:
+            case AVCaptureDevice.Position.front:
 				facing = "front"
 			}
 
