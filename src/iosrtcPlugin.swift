@@ -214,9 +214,13 @@ class iosrtcPlugin : CDVPlugin, AVAudioRecorderDelegate {
         
         // Start audio recording
         
-        let audioSession = AVAudioSession.sharedInstance()
+        let audioSession : AVAudioSession = AVAudioSession.sharedInstance()
         do {
-            try audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: .mixWithOthers)
+            if #available(iOS 10.0, *) {
+                try audioSession.setCategory(AVAudioSession.Category.playAndRecord, mode: AVAudioSession.Mode.default)
+            } else {
+                // Fallback on earlier versions
+            }
             try audioSession.setActive(true)
             
             let settings = [

@@ -248,7 +248,7 @@ class PluginGetUserMedia : NSObject, AVCaptureVideoDataOutputSampleBufferDelegat
             assetWriterInput!.expectsMediaDataInRealTime = true
             
             assetWriter!.startWriting()
-            assetWriter!.startSession(atSourceTime: kCMTimeZero)
+            assetWriter!.startSession(atSourceTime: CMTime.zero)
         }
         catch {
             print("[VideoManager]: Error persisting stream!")
