@@ -14,11 +14,13 @@ class PluginGetUserMedia : NSObject, AVCaptureVideoDataOutputSampleBufferDelegat
     var frameNumber: Int64 = 0
     
     var isRecording: Bool = false
-    
+    var rtcVideoSource: RTCAVFoundationVideoSource?
+
     init(rtcPeerConnectionFactory: RTCPeerConnectionFactory) {
         NSLog("PluginGetUserMedia#init()")
         
         self.rtcPeerConnectionFactory = rtcPeerConnectionFactory
+        self.rtcVideoSource = nil
     }
     
     
@@ -164,7 +166,10 @@ class PluginGetUserMedia : NSObject, AVCaptureVideoDataOutputSampleBufferDelegat
                 optionalConstraints: [:]
             )
             
-            rtcVideoSource = self.rtcPeerConnectionFactory.avFoundationVideoSource(with: constraints)
+            if(rtcVideoSource == nil){
+                rtcVideoSource = self.rtcPeerConnectionFactory.avFoundationVideoSource(with: constraints)
+            }
+            
             if(videoDevice != nil) {
                 if (videoDevice!.position == AVCaptureDevice.Position.front) {
                     rtcVideoSource?.useBackCamera = true
