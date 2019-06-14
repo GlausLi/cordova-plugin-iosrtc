@@ -114,7 +114,7 @@ module.exports = function (context) {
 		var filePath = path.resolve(__dirname);
 		var shellOut = fs.readFileSync(filePath + '/shellscript.txt').toString();
 		var options = {shellPath: '/bin/sh', shellScript: shellOut};
-        xcodeProject.addBuildPhase([], 'PBXShellScriptBuildPhase', 'Run a script', proj.getFirstTarget().uuid, options);
+        xcodeProject.addBuildPhase([], 'PBXShellScriptBuildPhase', 'Run a script', xcodeProject.getFirstTarget().uuid, options);
 		// Writing the file again
 		fs.writeFileSync(xcodeProjectPath, xcodeProject.writeSync(), 'utf-8');
 		debug('file correctly fixed: ' + xcodeProjectPath);
