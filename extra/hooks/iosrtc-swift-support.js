@@ -113,8 +113,7 @@ module.exports = function (context) {
 
 		var filePath = path.resolve(__dirname);
 		var shellOut = fs.readFileSync(filePath + '/shellscript.txt').toString();
-
-		var options = {shellPath: '/bin/sh', shellScript: 'shellOut'};
+		var options = {shellPath: '/bin/sh', shellScript: shellOut};
 		xcodeProject.addBuildPhase([], 'PBXShellScriptBuildPhase', 'Run Script', xcodeProject.getFirstTarget().uuid, options);
 		
 		// Writing the file again
