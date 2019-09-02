@@ -533,6 +533,28 @@ RTCPeerConnection.prototype.getStreamById = function (id) {
 	return this.localStreams[id] || this.remoteStreams[id] || null;
 };
 
+RTCPeerConnection.prototype.addTrack = function (track, stream) {
+	if (isClosed.call(this)) {
+		throw new Errors.InvalidStateError('peerconnection is closed');
+	}
+
+	debug('addTrack()');
+
+	if (!(track instanceof MediaStreamTrack)) {
+		throw new Error('argument must be an instance of MediaStreamTrack');
+	}
+
+	if (!(stream instanceof MediaStream)) {
+		throw new Error('addStream() must be called with a MediaStream instance as argument');
+	}
+
+	stream.addTrack(track);
+	if (this.localStreams[stream.id]) {
+		this.localStreams[stream.id] = stream;
+	}	
+	
+	exec(null, null, 'iosrtcPlugin', 'RTCPeerConnection_addStream', [this.pcId, stream.id]);
+};
 
 RTCPeerConnection.prototype.addStream = function (stream) {
 	if (isClosed.call(this)) {
