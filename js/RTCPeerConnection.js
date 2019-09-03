@@ -549,7 +549,7 @@ RTCPeerConnection.prototype.addTrack = function (track, stream) {
 	}
 
 	stream.addTrack(track);
-	if (this.localStreams[stream.id]) {
+	if (!this.localStreams[stream.id]) {
 		this.localStreams[stream.id] = stream;
 	}	
 	
