@@ -745,7 +745,7 @@ RTCPeerConnection.prototype.switchCamera = function (mediastream) {
 	function onResultError(error) {
 		debugerror('switchCamera() | failure: %s', error);
 	}
-
+	this.localStreams[mediastream.id] = mediastream;
 	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_switchcamera', [this.pcId, mediastream.id]);
 };
 
