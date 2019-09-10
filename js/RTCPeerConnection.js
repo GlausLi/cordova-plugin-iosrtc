@@ -551,8 +551,8 @@ RTCPeerConnection.prototype.addTrack = function (track, stream) {
 	stream.addTrack(track);
 	if (!this.localStreams[stream.id]) {
 		this.localStreams[stream.id] = stream;
-	}	
-	
+	}
+
 	exec(null, null, 'iosrtcPlugin', 'RTCPeerConnection_addStream', [this.pcId, stream.id]);
 };
 

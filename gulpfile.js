@@ -29,7 +29,7 @@ var gulp = require('gulp'),
 
 
 gulp.task('lint', function () {
-	var src = ['gulpfile.js', 'js/**/*.js', 'hooks/**/*.js', 'extra/**/*.js'];
+	var src = ['gulpfile.js', 'js/**/*.js'];
 
 	return gulp.src(src)
 		.pipe(jshint('.jshintrc'))  // Enforce good practics.
