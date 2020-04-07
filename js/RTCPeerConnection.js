@@ -735,6 +735,19 @@ RTCPeerConnection.prototype.stopRecording = function (audioOnly) {
 };
 
 
+RTCPeerConnection.prototype.mute = function (constraint) {
+    debug('mute()');
+
+    function onResultOK(data) {
+        debug('mute() | success [desc:%o]', data);
+    }
+
+    function onResultError(error) {
+        debugerror('mute() | failure: %s', error);
+    }
+    exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_mute', [this.pcId, constraint]);
+};
+
 RTCPeerConnection.prototype.switchCamera = function (mediastream) {
 	debug('switchCamera()');
 

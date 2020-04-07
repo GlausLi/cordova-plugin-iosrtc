@@ -97,6 +97,32 @@ class iosrtcPlugin : CDVPlugin, AVAudioRecorderDelegate {
 		pluginRTCPeerConnection.run()
 	}
 
+	@objc(RTCPeerConnection_mute:) func RTCPeerConnection_mute(_ command: CDVInvokedUrlCommand) {
+        NSLog("iosrtcPlugin#RTCPeerConnection_mute()")
+        let pcId = command.argument(at: 0) as! Int
+        let constraint = command.argument(at: 1) as! NSDictionary
+        NSLog("Constraint video: %@, audio: %@")
+        let pluginRTCPeerConnection = self.pluginRTCPeerConnections[pcId]
+        if pluginRTCPeerConnection == nil {
+            NSLog("iosrtcPlugin#RTCPeerConnection_mute() | ERROR: pluginRTCPeerConnection with pcId=%@ does not exist", String(pcId))
+            return;
+        }
+        self.queue.async { [weak pluginRTCPeerConnection] in
+            pluginRTCPeerConnection?.mute(constraint,
+                callback: { (data: NSDictionary) -> Void in
+                    self.emit(command.callbackId,
+                      result: CDVPluginResult(status: CDVCommandStatus_OK, messageAs: data as? [AnyHashable: Any])
+                    )
+            	},
+                errback: { (error: Error) -> Void in
+                    self.emit(command.callbackId,
+                      result: CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription)
+                    )
+            	}
+            )
+        }
+    }
+
     @objc(RTCPeerConnection_switchcamera:) func RTCPeerConnection_switchcamera(_ command: CDVInvokedUrlCommand) {
         NSLog("iosrtcPlugin#RTCPeerConnection_switchcamera()")
         
@@ -118,16 +144,16 @@ class iosrtcPlugin : CDVPlugin, AVAudioRecorderDelegate {
         
         self.queue.async { [weak pluginRTCPeerConnection] in
             pluginRTCPeerConnection?.switchcamera(pluginMediastream!,
-                                                  callback: { (data: NSDictionary) -> Void in
-                                                    self.emit(command.callbackId,
-                                                              result: CDVPluginResult(status: CDVCommandStatus_OK, messageAs: data as? [AnyHashable: Any])
-                                                    )
-            },
-                                                  errback: { (error: Error) -> Void in
-                                                    self.emit(command.callbackId,
-                                                              result: CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription)
-                                                    )
-            }
+                callback: { (data: NSDictionary) -> Void in
+                    self.emit(command.callbackId,
+                        result: CDVPluginResult(status: CDVCommandStatus_OK, messageAs: data as? [AnyHashable: Any])
+                    )
+				},
+                errback: { (error: Error) -> Void in
+                    self.emit(command.callbackId,
+                    	result: CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription)
+                    )
+            	}
             )
         }
     }

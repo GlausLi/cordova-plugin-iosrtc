@@ -250,6 +250,30 @@ class PluginRTCPeerConnection : NSObject, RTCPeerConnectionDelegate {
 		self.rtcPeerConnection.remove(pluginMediaStream.rtcMediaStream)
 	}
 
+    func mute(
+        _ constraint: NSDictionary,
+        callback: (_ data: NSDictionary) -> Void,
+        errback: (_ error: Error) -> Void
+        ) {
+        NSLog("PluginRTCPeerConnection#mute()")
+        
+        if self.rtcPeerConnection.signalingState.rawValue == RTCSignalingState.closed.rawValue {
+            return
+        }
+        self.rtcPeerConnection.senders.forEach { (sender) in
+            if sender.track?.kind == "video"{
+                sender.track?.isEnabled = !(constraint.object(forKey: "video") as? Bool ?? false)
+            }
+            if sender.track?.kind == "audio"{
+                sender.track?.isEnabled = !(constraint.object(forKey: "audio") as? Bool ?? false)
+            }
+        }
+        let data: NSDictionary = [
+            "result": true
+        ]
+        callback(data);
+    }
+
     func switchcamera(
         _ pluginMediaStream: PluginMediaStream,
         callback: (_ data: NSDictionary) -> Void,
