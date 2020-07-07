@@ -958,7 +958,8 @@ class iosrtcPlugin : CDVPlugin, AVAudioRecorderDelegate {
 		NSLog("iosrtcPlugin#getUserMedia()")
 
 		let constraints = command.argument(at: 0) as! NSDictionary
-        self.commandDelegate.run {
+        
+        self.commandDelegate.run(inBackground: {
             self.pluginGetUserMedia.call(constraints,
                                          callback: { (data: NSDictionary) -> Void in
                                             self.emit(command.callbackId,
@@ -972,7 +973,7 @@ class iosrtcPlugin : CDVPlugin, AVAudioRecorderDelegate {
             },
                                          eventListenerForNewStream: self.saveMediaStream
             )
-        }
+        })
 	}
 
 
@@ -1018,7 +1019,8 @@ class iosrtcPlugin : CDVPlugin, AVAudioRecorderDelegate {
 
 
 	fileprivate func emit(_ callbackId: String, result: CDVPluginResult) {
-		DispatchQueue.main.async {
+		DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
 			self.commandDelegate!.send(result, callbackId: callbackId)
 		}
 	}
