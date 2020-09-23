@@ -36,7 +36,26 @@ class PluginMediaStreamRenderer : NSObject, RTCEAGLVideoViewDelegate {
         self.videoView.isUserInteractionEnabled = false
         
         // Place the video element view inside the WebView's superview
-        self.webView.superview?.addSubview(self.elementView)
+		self.webView.addSubview(self.elementView)
+		self.webView.isOpaque = false
+		self.webView.backgroundColor = UIColor.clear
+		
+		// https://stackoverflow.com/questions/46317061/use-safe-area-layout-programmatically
+		// https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide
+		// https://developer.apple.com/documentation/uikit/
+		let view = self.elementView;
+		if #available(iOS 11.0, *) {
+			let guide = webView.safeAreaLayoutGuide;
+			view.topAnchor.constraint(equalTo: guide.topAnchor).isActive = true
+			view.bottomAnchor.constraint(equalTo: guide.bottomAnchor).isActive = true
+			view.leftAnchor.constraint(equalTo: guide.leftAnchor).isActive = true
+			view.rightAnchor.constraint(equalTo: guide.rightAnchor).isActive = true
+		} else {
+			NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: webView, attribute: .top, multiplier: 1.0, constant: 0).isActive = true
+			NSLayoutConstraint(item: view, attribute: .bottom, relatedBy: .equal, toItem: webView, attribute: .bottom, multiplier: 1.0, constant: 0).isActive = true
+			NSLayoutConstraint(item: view, attribute: .leading, relatedBy: .equal, toItem: webView, attribute: .leading, multiplier: 1.0, constant: 0).isActive = true
+			NSLayoutConstraint(item: view, attribute: .trailing, relatedBy: .equal, toItem: webView, attribute: .trailing, multiplier: 1.0, constant: 0).isActive = true
+		}
     }
     
     
@@ -187,12 +206,12 @@ class PluginMediaStreamRenderer : NSObject, RTCEAGLVideoViewDelegate {
             }
             
             self.elementView.alpha = CGFloat(opacity)
-            // self.elementView.layer.zPosition = CGFloat(zIndex)
-            self.elementView.layer.zPosition = CGFloat((zIndex == -10) ? 0 : zIndex) // Bugfix: Hidden view fix
-            
+            self.elementView.layer.zPosition = CGFloat(zIndex)
+
             // if the zIndex is 0 (the default) bring the view to the top, last one wins
             if zIndex == 0 {
-                self.webView.superview?.bringSubviewToFront(self.elementView)
+                self.webView.bringSubviewToFront(self.elementView)
+                //self.webView?.bringSubview(toFront: self.elementView)
             }
             
             if !mirrored {
