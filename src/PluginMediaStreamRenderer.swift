@@ -207,7 +207,7 @@ class PluginMediaStreamRenderer : NSObject, RTCEAGLVideoViewDelegate {
             
             self.elementView.alpha = CGFloat(opacity)
             self.elementView.layer.zPosition = CGFloat(zIndex)
-
+            self.elementView.layer.zPosition = CGFloat((zIndex == -10) ? 0 : zIndex) // Bugfix: Hidden view fix
             // if the zIndex is 0 (the default) bring the view to the top, last one wins
             if zIndex == 0 {
                 self.webView.bringSubviewToFront(self.elementView)
