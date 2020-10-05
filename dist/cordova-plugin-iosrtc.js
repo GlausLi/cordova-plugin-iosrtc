@@ -3359,8 +3359,8 @@ function restoreCallbacksSupport() {
 	callbackifyPrototype(RTCPeerConnection.prototype, 'setLocalDescription');
 	callbackifyPrototype(RTCPeerConnection.prototype, 'addIceCandidate');
 	callbackifyPrototype(RTCPeerConnection.prototype, 'getStats');
-    callbackifyPrototype(RTCPeerConnection.prototype, 'switchCamera');
-    callbackifyPrototype(RTCPeerConnection.prototype, 'mute');
+	callbackifyPrototype(RTCPeerConnection.prototype, 'switchCamera');
+	callbackifyPrototype(RTCPeerConnection.prototype, 'mute');
 }
 
 function registerGlobals(doNotRestoreCallbacksSupport) {
