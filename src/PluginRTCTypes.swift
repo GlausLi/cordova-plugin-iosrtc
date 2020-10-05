@@ -1,9 +1,7 @@
-import WebRTC
-
 struct PluginRTCTypes {
 	static let signalingStates = [
-        RTCSignalingState.stable.rawValue:             "stable",
-        RTCSignalingState.haveLocalOffer.rawValue:     "have-local-offer",
+		RTCSignalingState.stable.rawValue:             "stable",
+		RTCSignalingState.haveLocalOffer.rawValue:     "have-local-offer",
 		RTCSignalingState.haveLocalPrAnswer.rawValue:  "have-local-pranswer",
 		RTCSignalingState.haveRemoteOffer.rawValue:    "have-remote-offer",
 		RTCSignalingState.haveRemotePrAnswer.rawValue: "have-remote-pranswer",
@@ -34,7 +32,8 @@ struct PluginRTCTypes {
 	]
 
 	static let mediaStreamTrackStates = [
-		RTCMediaStreamTrackState.live.rawValue:              "live",
-		RTCMediaStreamTrackState.ended.rawValue:             "ended"
+		RTCMediaStreamTrackState.live.rawValue:		"live",
+		RTCMediaStreamTrackState.ended.rawValue:	"ended"
 	]
+
 }
