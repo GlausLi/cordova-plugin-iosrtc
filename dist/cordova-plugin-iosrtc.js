@@ -1,4 +1,3 @@
-cordova.define("cordova-plugin-iosrtc.Plugin", function(require, exports, module) {
 /*
  * cordova-plugin-iosrtc v6.0.12
  * Cordova iOS plugin exposing the full WebRTC W3C JavaScript APIs
@@ -4911,6 +4910,4 @@ yaetiEventTarget.prototype.dispatchEvent = function(event)
 module.exports = yaetiEventTarget;
 
 },{}]},{},[21])(21)
-});
-
 });
