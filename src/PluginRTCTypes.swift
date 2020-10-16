@@ -1,3 +1,5 @@
+import WebRTC
+
 struct PluginRTCTypes {
 	static let signalingStates = [
 		RTCSignalingState.stable.rawValue:             "stable",

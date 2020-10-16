@@ -1,6 +1,6 @@
 import Foundation
 import AVFoundation
-
+import WebRTC
 
 @objc(iosrtcPlugin) // This class must be accesible from Objective-C.
 class iosrtcPlugin : CDVPlugin {

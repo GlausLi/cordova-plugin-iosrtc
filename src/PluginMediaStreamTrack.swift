@@ -1,5 +1,5 @@
 import Foundation
-
+import WebRTC
 
 class PluginMediaStreamTrack : NSObject {
 	var rtcMediaStreamTrack: RTCMediaStreamTrack

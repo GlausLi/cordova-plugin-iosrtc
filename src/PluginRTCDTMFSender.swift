@@ -1,5 +1,5 @@
 import Foundation
-
+import WebRTC
 
 class PluginRTCDTMFSender : NSObject {
 	var rtcRtpSender: RTCRtpSender?

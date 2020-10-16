@@ -1,5 +1,5 @@
 import Foundation
-
+import WebRTC
 
 class PluginRTCPeerConnectionConstraints {
 	fileprivate var constraints: RTCMediaConstraints
