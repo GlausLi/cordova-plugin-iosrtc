@@ -490,6 +490,10 @@ RTCPeerConnection.prototype.addTrack = function (track, stream) {
 	if (!stream) {
 		exec(null, null, 'iosrtcPlugin', 'RTCPeerConnection_addTrack', [this.pcId, track.id, null]);
 	}
+	
+	return new RTCRtpSender({
+		track: track
+	});
 };
 
 RTCPeerConnection.prototype.removeTrack = function (sender) {
@@ -650,33 +654,6 @@ RTCPeerConnection.prototype.close = function () {
 	exec(null, null, 'iosrtcPlugin', 'RTCPeerConnection_close', [this.pcId]);
 };
 
-RTCPeerConnection.prototype.mute = function (constraint) {
-    debug('mute()');
-
-    function onResultOK(data) {
-        debug('mute() | success [desc:%o]', data);
-    }
-
-    function onResultError(error) {
-        debugerror('mute() | failure: %s', error);
-    }
-    exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_mute', [this.pcId, constraint]);
-};
-
-RTCPeerConnection.prototype.switchCamera = function (mediastream) {
-	debug('switchCamera()');
-
-	function onResultOK(data) {
-		debug('switchCamera() | success [data:%o]', data);
-	}
-
-	function onResultError(error) {
-		debugerror('switchCamera() | failure: %s', error);
-	}
-	this.localStreams[mediastream.id] = mediastream;
-	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_switchcamera', [this.pcId,mediastream.id]);
-};
-
 // Save current RTCPeerConnection.prototype
 RTCPeerConnection.prototype_descriptor = Object.getOwnPropertyDescriptors(RTCPeerConnection.prototype);
 
@@ -772,15 +749,16 @@ function onEvent(data) {
 			break;
 
 		case 'track':
-			var track = new MediaStreamTrack(data.track),
-				stream = this.remoteStreams[data.streamId] || MediaStream.create(data.stream),
-				receiver = new RTCRtpReceiver({ track: track }),
-				transceiver = new RTCRtpTransceiver({ receiver: receiver });
+			event.track = new MediaStreamTrack(data.track);
+			event.receiver = new RTCRtpReceiver({ track: event.track });
+			event.transceiver = new RTCRtpTransceiver({ receiver: event.receiver });
+			event.streams = [];
 
-			event.track = track;
-			event.receiver = receiver;
-			event.transceiver = transceiver;
-			event.streams = [stream];
+			// Add stream only if available in case of Unified-Plan of track event without stream
+			if (data.stream && data.streamId) {
+				var stream = this.remoteStreams[data.streamId] || MediaStream.create(data.stream);
+				event.streams.push(stream);
+			}
 			break;
 
 		case 'addstream':

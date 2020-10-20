@@ -6,8 +6,6 @@ class PluginGetUserMedia {
 
 	var rtcPeerConnectionFactory: RTCPeerConnectionFactory
 
-	var rtcVideoSource: RTCVideoSource?
-
 	init(rtcPeerConnectionFactory: RTCPeerConnectionFactory) {
 		NSLog("PluginGetUserMedia#init()")
 		self.rtcPeerConnectionFactory = rtcPeerConnectionFactory
@@ -41,6 +39,7 @@ class PluginGetUserMedia {
 		var pluginMediaStream: PluginMediaStream?
 		var rtcAudioTrack: RTCAudioTrack?
 		var rtcVideoTrack: RTCVideoTrack?
+		var rtcVideoSource: RTCVideoSource?
 
 		if videoRequested == true {
 			switch AVCaptureDevice.authorizationStatus(for: AVMediaType.video) {
