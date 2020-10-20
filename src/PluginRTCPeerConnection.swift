@@ -330,6 +330,57 @@ class PluginRTCPeerConnection : NSObject, RTCPeerConnectionDelegate {
 		}
 	}
 
+	func mute(
+		_ constraint: NSDictionary,
+		callback: (_ data: NSDictionary) -> Void,
+		errback: (_ error: Error) -> Void
+		) {
+		NSLog("PluginRTCPeerConnection#mute()")
+
+		if self.rtcPeerConnection.signalingState.rawValue == RTCSignalingState.closed.rawValue {
+			return
+		}
+		self.rtcPeerConnection.senders.forEach { (sender) in
+			if sender.track?.kind == "video"{
+				sender.track?.isEnabled = !(constraint.object(forKey: "video") as? Bool ?? false)
+			}
+			if sender.track?.kind == "audio"{
+				sender.track?.isEnabled = !(constraint.object(forKey: "audio") as? Bool ?? false)
+			}
+		}
+		let data: NSDictionary = [
+			"result": true
+		]
+		callback(data);
+	}
+
+	func switchcamera(
+		_ pluginMediaStream: PluginMediaStream,
+		callback: (_ data: NSDictionary) -> Void,
+		errback: (_ error: Error) -> Void
+		) {
+		NSLog("PluginRTCPeerConnection#switchcamera()")
+
+		if self.rtcPeerConnection.signalingState.rawValue == RTCSignalingState.closed.rawValue {
+			return
+		}
+
+		let sender: RTCRtpSender = self.rtcPeerConnection.senders.filter{
+			$0.track?.kind == pluginMediaStream.rtcMediaStream.videoTracks[0].kind
+			}.first!
+		sender.track = pluginMediaStream.rtcMediaStream.videoTracks[0]
+
+		let audiosender: RTCRtpSender = self.rtcPeerConnection.senders.filter{
+			$0.track?.kind == pluginMediaStream.rtcMediaStream.audioTracks[0].kind
+			}.first!
+		audiosender.track = pluginMediaStream.rtcMediaStream.audioTracks[0]
+
+		let data: NSDictionary = [
+			"result": true
+		]
+		callback(data);
+	}
+
 	func IsUnifiedPlan() -> Bool {
 		return rtcPeerConnection.configuration.sdpSemantics == RTCSdpSemantics.unifiedPlan;
 	}

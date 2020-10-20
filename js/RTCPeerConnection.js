@@ -654,6 +654,33 @@ RTCPeerConnection.prototype.close = function () {
 	exec(null, null, 'iosrtcPlugin', 'RTCPeerConnection_close', [this.pcId]);
 };
 
+RTCPeerConnection.prototype.mute = function (constraint) {
+    debug('mute()');
+
+    function onResultOK(data) {
+        debug('mute() | success [desc:%o]', data);
+    }
+
+    function onResultError(error) {
+        debugerror('mute() | failure: %s', error);
+    }
+    exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_mute', [this.pcId, constraint]);
+};
+
+RTCPeerConnection.prototype.switchCamera = function (mediastream) {
+	debug('switchCamera()');
+
+	function onResultOK(data) {
+		debug('switchCamera() | success [data:%o]', data);
+	}
+
+	function onResultError(error) {
+		debugerror('switchCamera() | failure: %s', error);
+	}
+	this.localStreams[mediastream.id] = mediastream;
+	exec(onResultOK, onResultError, 'iosrtcPlugin', 'RTCPeerConnection_switchcamera', [this.pcId,mediastream.id]);
+};
+
 // Save current RTCPeerConnection.prototype
 RTCPeerConnection.prototype_descriptor = Object.getOwnPropertyDescriptors(RTCPeerConnection.prototype);
 
