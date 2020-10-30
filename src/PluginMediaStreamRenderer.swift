@@ -294,7 +294,6 @@ class PluginMediaStreamRenderer : NSObject, RTCEAGLVideoViewDelegate {
 				"height": Int(size.height)
 			]
 		])
-		
 		*/
 	}
 	
