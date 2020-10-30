@@ -293,8 +293,9 @@ class PluginMediaStreamRenderer : NSObject, RTCEAGLVideoViewDelegate {
 				"width": Int(size.width),
 				"height": Int(size.height)
 			]
-			*/
 		])
+		
+		*/
 	}
 	
 	func videoView(_ videoView: RTCVideoRenderer, didChange frame: RTCVideoFrame?) {
